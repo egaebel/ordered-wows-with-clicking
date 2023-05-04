@@ -1,5 +1,5 @@
 import './App.css';
-import corgo from "./avi-hopping-on-bed--just-the-head.jpg"
+import owenWilsonWow from "./owen-wilson-wow.avif"
 import { useEffect, useState } from "react";
 import Wow from './Wow';
 import WowView from './WowView';
@@ -15,7 +15,11 @@ import WowView from './WowView';
  */
 function App() {
 
+    const pageSize = 10;
+    const [currentSelectedWow, setCurrentSelectedWow] = useState(undefined);
     const [currentWows, setCurrentWows] = useState([]);
+    const [startIndex, setStartIndex] = useState(0);
+    const [endIndex, setEndIndex] = useState(pageSize);
 
     let getOrderedWowsRange = async (startIndex, endIndex) => {
         console.log("Getting wows from range: %d - %d", startIndex, endIndex);
@@ -28,25 +32,53 @@ function App() {
         setCurrentWows(orderedWows);
     };
 
+    const clearOnClick = () => {
+        setCurrentSelectedWow(undefined);
+    };
+
+    const prevOnClick = () => {
+        setStartIndex(Math.max(0, startIndex - pageSize));
+        setEndIndex(Math.max(10, endIndex - pageSize));
+    };
+
+    const nextOnClick = () => {
+        if (currentWows.length < pageSize) {
+            console.log("End of wows.");
+            return;
+        }
+        setStartIndex(startIndex + pageSize);
+        setEndIndex(endIndex + pageSize);
+    };
+
     useEffect(() => {
-        getOrderedWowsRange(0, 10);
-    }, []);
+        getOrderedWowsRange(startIndex, endIndex);
+    }, [startIndex, endIndex]);
+
+    let imageDisplayed = (<div style={{ fontWeight: "bold" }}>
+        <img src={owenWilsonWow} width="700px" alt="Owen Wilson himself"></img>
+    </div>);
+    if (currentSelectedWow !== undefined) {
+        imageDisplayed = <Wow currentWow={currentSelectedWow}></Wow>;
+    }
 
     return (
         <div className="App">
             <h1>Prepare to be WOW-ed</h1>
-            <div style={{ fontWeight: "bold" }}>
-                Have a corgi in the meantime <br />
-                <img src={corgo} width="700px" alt="corgo worgo dorgo"></img>
+            <div style={{ justifyContent: "center", display: "flex" }}>
+                <button onClick={clearOnClick}>Clear Wow</button>
             </div>
-            <Wow></Wow>
+            {imageDisplayed}
+            <div style={{ justifyContent: "center", display: "flex" }}>
+                <button onClick={prevOnClick}>Prev</button>
+                <button onClick={nextOnClick}>Next</button>
+            </div>
             <div className="wowsTable">
                 <table className="wowsTable">
                     <thead>
                         <tr>All the wows you could ever want</tr>
                         <tr><br /></tr>
                     </thead>
-                    {currentWows.map(val => <WowView fullContent={JSON.stringify(val, null, 2)} />)}
+                    {currentWows.map(val => <WowView onClickFn={setCurrentSelectedWow} fullContent={val} />)}
                 </table>
             </div>
         </div >

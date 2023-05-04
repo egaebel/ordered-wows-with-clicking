@@ -1,39 +1,21 @@
-// import logo from "./logo.svg";
-import React, { useState } from "react";
-
-function Wow() {
-    console.log("Re-rendering OwenWilsonWow")
-
+function Wow(props) {
     const defaultWowValue = "Awaiting Wows";
-    const [currentWow, setCurrentWow] = useState(defaultWowValue);
-    console.log("currentWow: " + currentWow);
+    const currentWow = props.currentWow;
 
-    const options = { method: 'GET', headers: { accept: 'application/json' } };
-
-    let getRandomWow = () => {
-        console.log("getRandomWow called!");
-        fetch("https://owen-wilson-wow-api.onrender.com/wows/random", options)
-            .then(response => {
-                console.log("wow response: " + response);
-                response.json().then((randomWow) => {
-                    console.log("Retrieved randomWow: " + Object.entries(randomWow));
-                    setCurrentWow(randomWow);
-                })
-            })
-            .then(response => console.log(response))
-            .catch(err => console.error(err));
-    };
+    console.log("Re-rendering OwenWilsonWow with currentWow: " + currentWow);
 
     let wowContent = "";
-    if (currentWow !== defaultWowValue) {
+    if (currentWow !== defaultWowValue && currentWow !== undefined && currentWow !== "") {
+        console.log("currentWow['video']: " + currentWow["video"]);
+        console.log("currentWow['video']: " + currentWow.video);
         wowContent = (
             <div>
-                Movie: {currentWow[0]["movie"]} <br />
-                Full line: {currentWow[0]["full_line"]} <br />
-                <audio controls preload="auto" src={currentWow[0]["audio"]}></audio>  <br />
-                <img src={currentWow[0]["poster"]} alt="movie poster" style={{ maxHeight: "25%", maxWidth: "25%" }}></img>  <br />
+                Movie: {currentWow["movie"]} <br />
+                Full line: {currentWow["full_line"]} <br />
+                <audio controls preload="auto" src={currentWow["audio"]}></audio>  <br />
+                <img src={currentWow["poster"]} alt="movie poster" style={{ maxHeight: "25%", maxWidth: "25%" }}></img>  <br />
                 <div>
-                    <video controls preload="auto" src={currentWow[0]["video"]["1080p"]} height="1080px" width="1920px"></video>
+                    <video controls preload="auto" src={currentWow["video"]["1080p"]} height="1080px" width="1920px"></video>
                 </div>
             </div>
         );
@@ -41,8 +23,7 @@ function Wow() {
 
     console.log("currentWow:\n" + JSON.stringify(currentWow));
     return (<div style={{ maxWidth: "100%" }}>
-        <div>"Wows start below!"</div>
-        <button onClick={getRandomWow}>Get Wowed</button>
+        <div>"Selected wow!"</div>
         {wowContent}
     </div >)
 }
