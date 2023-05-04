@@ -43,7 +43,7 @@ function App() {
 
     const nextOnClick = () => {
         if (currentWows.length < pageSize) {
-            console.log("End of wows.");
+            console.log("End of wows reached.");
             return;
         }
         setStartIndex(startIndex + pageSize);
